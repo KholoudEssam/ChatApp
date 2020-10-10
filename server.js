@@ -34,11 +34,11 @@ app.get('/chat', (req, res) => {
 io.on('connection', (socket) => {
     addClient(socket.client.id, username);
 
-    let usersNames = [];
-    for (const iterator of users.values()) {
-        usersNames.push(iterator);
-    }
-    io.emit('allUsers', usersNames);
+    // let usersNames = [];
+    // for (const iterator of users.values()) {
+    //     usersNames.push(iterator);
+    // }
+    io.emit('allUsers', getCurrentUsers());
 
     socket.emit('chat-message', `Welcome ${username} to the chat!`, 'ChatBot');
 
@@ -60,10 +60,7 @@ io.on('connection', (socket) => {
             `${user} left the chat..`,
             'ChatBot'
         );
-        for (const iterator of users.values()) {
-            usersNames.push(iterator);
-        }
-        io.emit('allUsers', usersNames);
+        io.emit('allUsers', getCurrentUsers());
     });
 });
 
@@ -95,4 +92,12 @@ function removeClient(socketId) {
         users.delete(socketId);
         return user;
     }
+}
+
+function getCurrentUsers() {
+    let usersNames = [];
+    for (const iterator of users.values()) {
+        usersNames.push(iterator);
+    }
+    return usersNames;
 }
