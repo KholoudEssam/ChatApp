@@ -27,8 +27,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 const users = new Map();
 let username;
 app.get('/chat', (req, res) => {
-    username = req.query.username;
-    res.sendFile(path.join(__dirname, './public/chat.html'));
+    console.log(req.query);
+    if (!req.query.username || req.query === {}) {
+        res.sendFile(path.join(__dirname, './public/index.html'));
+    } else {
+        username = req.query.username;
+        res.sendFile(path.join(__dirname, './public/chat.html'));
+    }
 });
 
 io.on('connection', (socket) => {
