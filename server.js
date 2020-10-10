@@ -3,46 +3,96 @@ const path = require('path');
 
 const app = express();
 const mongoose = require('mongoose');
-const User = require('./models/user');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-
-const router = require('./routes/chat');
+const User = require('./models/user');
+// const router = require('./routes/chat');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', router);
+// mongoose
+//     .connect('mongodb+srv://admin:123@cluster0.8udwn.mongodb.net/chatApp', {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//         useCreateIndex: true,
+//     })
+//     .then(() => {
+//         console.log('connected to db..');
+//     })
+//     .catch((err) => {
+//         console.log(err.message);
+//     });
 
-mongoose
-    .connect('mongodb+srv://admin:123@cluster0.8udwn.mongodb.net/chatApp', {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-    })
-    .then(() => {
-        console.log('connected to db..');
-    })
-    .catch((err) => {
-        console.log(err.message);
-    });
+const users = new Map();
+let username;
+app.get('/chat', (req, res) => {
+    username = req.query.username;
+    res.sendFile(path.join(__dirname, './public/chat.html'));
+});
 
-io.on('connection', async (socket) => {
-    const users = await User.find();
+io.on('connection', (socket) => {
+    addClient(socket.client.id, username);
 
-    socket.broadcast.emit('current-users', users);
+    let usersNames = [];
+    for (const iterator of users.values()) {
+        usersNames.push(iterator);
+    }
+    io.emit('allUsers', usersNames);
 
-    socket.broadcast.emit('chat-message', 'User joined the chat..');
+    socket.emit('chat-message', `Welcome ${username} to the chat!`, 'ChatBot');
 
-    socket.on('chat-message', (msg) => {
-        socket.broadcast.emit('chat-message', msg);
+    socket.broadcast.emit(
+        'chat-message',
+        `${username} joined the chat..`,
+        'ChatBot'
+    );
+
+    socket.on('chat-message', (msg, clientName) => {
+        clientName = getClient(socket.client.id);
+        io.emit('chat-message', msg, clientName);
     });
 
     socket.on('disconnect', () => {
-        socket.broadcast.emit('chat-message', 'User left the chat..');
+        const user = removeClient(socket.client.id);
+        socket.broadcast.emit(
+            'chat-message',
+            `${user} left the chat..`,
+            'ChatBot'
+        );
+        for (const iterator of users.values()) {
+            usersNames.push(iterator);
+        }
+        io.emit('allUsers', usersNames);
     });
 });
 
 const port = process.env.PORT || 3000;
 
 server.listen(port, () => console.log(`Server is running on port ${port} ...`));
+
+function addClient(socketId, username) {
+    users.set(socketId, username);
+    // if (!users.has(username)) {
+    //     users.set(username, new Set([socketId]));
+    // } else {
+    //     users.get(username).add(socketId);
+    // }
+}
+
+function getClient(socketId) {
+    let user;
+    if (users.has(socketId)) {
+        user = users.get(socketId);
+        return user;
+    }
+}
+
+function removeClient(socketId) {
+    let user;
+    if (users.has(socketId)) {
+        user = users.get(socketId);
+        users.delete(socketId);
+        return user;
+    }
+}

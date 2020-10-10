@@ -4,7 +4,7 @@ const path = require('path');
 const User = require('../models/user');
 const router = express.Router();
 
-router.post('/chat', async (req, res) => {
+router.post('/chat/:username', async (req, res) => {
     try {
         if (req.body.username) {
             let user = await User.findOne({ username: req.body.username });
