@@ -4,53 +4,27 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Chat App</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-            body {
-                font: 13px Helvetica, Arial;
-            }
-            form {
-                background: #000;
-                padding: 3px;
-                position: fixed;
-                bottom: 0;
-                width: 100%;
-            }
-            form input {
-                border: 0;
-                padding: 10px;
-                width: 90%;
-                margin-right: 0.5%;
-            }
-            form button {
-                width: 9%;
-                background: rgb(130, 224, 255);
-                border: none;
-                padding: 10px;
-            }
-            #messages {
-                list-style-type: none;
-                margin: 0;
-                padding: 0;
-            }
-            #messages li {
-                padding: 5px 10px;
-            }
-            #messages li:nth-child(odd) {
-                background: #eee;
-            }
-        </style>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"
+        />
     </head>
     <body>
-        <ul id="messages"></ul>
-        <form action="">
-            <input id="m" autocomplete="off" /><button id="btn">Send</button>
-        </form>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="./script.js"></script>
+        <div class="container mt-4">
+            <form action="/chat" method="POST">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        id="username"
+                    />
+                </div>
+                <button type="submit" class="btn btn-primary">Join Chat</button>
+            </form>
+        </div>
     </body>
 </html>

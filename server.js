@@ -2,20 +2,44 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
+const mongoose = require('mongoose');
+const User = require('./models/user');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+const router = require('./routes/chat');
+
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-io.on('connection', (socket) => {
-    socket.broadcast.emit('user-join', 'User joined the chat..');
+app.use('/', router);
+
+mongoose
+    .connect('mongodb+srv://admin:123@cluster0.8udwn.mongodb.net/chatApp', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+    })
+    .then(() => {
+        console.log('connected to db..');
+    })
+    .catch((err) => {
+        console.log(err.message);
+    });
+
+io.on('connection', async (socket) => {
+    const users = await User.find();
+
+    socket.broadcast.emit('current-users', users);
+
+    socket.broadcast.emit('chat-message', 'User joined the chat..');
 
     socket.on('chat-message', (msg) => {
         socket.broadcast.emit('chat-message', msg);
     });
 
     socket.on('disconnect', () => {
-        socket.broadcast.emit('user-left', 'User left the chat..');
+        socket.broadcast.emit('chat-message', 'User left the chat..');
     });
 });
 
