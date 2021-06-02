@@ -5,25 +5,30 @@ let ulList = document.getElementById('messages');
 let btn = document.getElementById('btn');
 const { username } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
+const uname = 'testUser' + Math.random();
+
+socket.on('connect', () => {
+    console.log('Connected to Server');
+    appendLIOnlineUsers(uname);
+});
+
 btn.addEventListener('click', (e) => {
     e.preventDefault();
-    socket.emit('chat-message', messageInput.value);
 
+    socket.emit('createMessage', {
+        from: uname,
+        body: messageInput.value,
+    });
     // appendLI(messageInput.value);
-    ulList.scrollTop = ulList.scrollHeight;
+
     messageInput.value = '';
     messageInput.focus();
 });
 
-socket.on('chat-message', (msg, clientName) => {
-    // console.log(clientName);
-    appendLI(msg, clientName);
-});
-socket.on('allUsers', (users) => {
-    document.getElementById('users').innerHTML = '';
-    for (let key of users) {
-        appendLIOnlineUsers(key);
-    }
+socket.on('newMessage', (msg) => {
+    console.log(`From ${msg.from}: ${msg.body} at ${msg.createdAt}`);
+
+    appendLI(msg.body, msg.from);
 });
 
 function appendLI(msg, clientName) {
