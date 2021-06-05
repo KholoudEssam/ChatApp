@@ -1,11 +1,10 @@
 let socket = io();
 
-let messageInput = document.getElementById('m');
+let messageInput = document.getElementById('message');
 let ulList = document.getElementById('messages');
 let btn = document.getElementById('btn');
-const { username } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
-const uname = 'testUser' + Math.random();
+const uname = 'testUser' + Math.ceil(Math.random() * 10);
 
 socket.on('connect', () => {
     console.log('Connected to Server');
@@ -19,23 +18,31 @@ btn.addEventListener('click', (e) => {
         from: uname,
         body: messageInput.value,
     });
-    // appendLI(messageInput.value);
 
     messageInput.value = '';
     messageInput.focus();
 });
 
 socket.on('newMessage', (msg) => {
-    console.log(`From ${msg.from}: ${msg.body} at ${msg.createdAt}`);
+    const { body, from, createdAt } = msg;
+    console.log(`From ${from}: ${body} at ${createdAt}`);
 
-    appendLI(msg.body, msg.from);
+    appendMessage(body, from, createdAt);
 });
 
-function appendLI(msg, clientName) {
-    let node = document.createElement('LI');
-    let textnode = document.createTextNode(`${clientName}: ${msg}`);
-    node.appendChild(textnode);
-    ulList.appendChild(node);
+function appendMessage(body, from, createdAt) {
+    const msgLI = document.createElement('LI');
+    msgLI.classList.add('message');
+    msgLI.innerHTML = `
+        <div class='message__title'>
+            <h4>${from}</h4>
+            <span>${createdAt}</span>
+        </div>
+        <div class='message__body'>
+            <p>${body}</p>
+        </div>
+    `;
+    ulList.appendChild(msgLI);
 }
 function appendLIOnlineUsers(clientName) {
     let node = document.createElement('LI');

@@ -17,9 +17,8 @@
     "license": "ISC",
     "dependencies": {
         "express": "^4.17.1",
-        "mongoose": "^5.10.9",
-        "qs": "^6.9.4",
-        "socket.io": "^2.3.0"
+        "moment": "^2.29.1",
+        "socket.io": "^2.4.1"
     },
     "devDependencies": {
         "nodemon": "^2.0.4"

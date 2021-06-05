@@ -9,19 +9,6 @@ const msgInfo = require('./utils/message');
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/chat.html'));
-});
-
-// app.get('/chat', (req, res) => {
-//     console.log(req.query);
-//     if (!req.query.username || req.query === {}) {
-//         res.sendFile(path.join(__dirname, './public/index.html'));
-//     } else {
-//         username = req.query.username;
-//         res.sendFile(path.join(__dirname, './public/chat.html'));
-//     }
-// });
 
 io.on('connection', (socket) => {
     console.log('Client Connected');
