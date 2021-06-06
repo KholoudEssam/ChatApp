@@ -3,31 +3,33 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Chat App</title>
+        <title>Join | Chat App</title>
         <link rel="stylesheet" href="styles/main.css" />
     </head>
-    <body>
-        <div class="chat">
-            <div class="chat__sidebar">
-                <h3>People</h3>
-                <div id="users"></div>
-            </div>
-            <div class="chat__main">
-                <ul id="messages" class="chat__messages"></ul>
-                <div class="chat__footer">
-                    <form action="">
-                        <input
-                            id="message"
-                            autocomplete="off"
-                            autofocus
-                            placeholder="write your message.."
-                        />
-                        <button id="btn" type="submit">Send</button>
-                    </form>
+    <body class="centered-form">
+        <div class="centered-form__form">
+            <form action="/chat.html">
+                <div class="form-field">
+                    <h3>Join a Chat</h3>
                 </div>
-            </div>
+                <div class="form-field">
+                    <label for="name">Display name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        autofocus
+                        required
+                        id="name"
+                    />
+                </div>
+                <div class="form-field">
+                    <label for="room">Room name</label>
+                    <input type="text" name="room" required id="room" />
+                </div>
+                <div class="form-field">
+                    <button type="submit">Join</button>
+                </div>
+            </form>
         </div>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="scripts/main.js"></script>
     </body>
 </html>

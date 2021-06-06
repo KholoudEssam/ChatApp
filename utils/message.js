@@ -8,4 +8,4 @@ module.exports = (from, body) => {
         body,
         createdAt: date.format('h:mm A'),
     };
-};
+}; 
