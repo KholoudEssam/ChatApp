@@ -10,15 +10,24 @@ let room = '';
 socket.on('connect', () => {
     console.log('Connected to Server');
     const data = extractParams();
+
     if (!(isRealString(data.name) || isRealString(data.room))) {
         alert('name and room name are required');
         window.location.href = '/';
         return;
     }
+
     uname = capitalizeFirstLetter(data.name);
     room = capitalizeFirstLetter(data.room);
 
-    socket.emit('join', { uname, room });
+    socket.emit('checkUser', uname, (res) => {
+        if (res) {
+            alert('Sorry, Name is taken, Please choose new name');
+            window.location.href = '/';
+            return;
+        }
+        socket.emit('join', { uname, room });
+    });
 });
 
 btn.addEventListener('click', (e) => {
@@ -95,6 +104,9 @@ function extractParams() {
     return queryString;
 }
 function capitalizeFirstLetter(str) {
+    //to make names case insensitive
+    str = str.toLowerCase();
+
     return str && str.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
 }
 function isRealString(str) {

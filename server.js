@@ -52,6 +52,10 @@ io.on('connection', (socket) => {
             );
         io.to(removedUser.room).emit('usersOfRoom', currentUsers);
     });
+
+    socket.on('checkUser', (data, cb) => {
+        cb(user.checkUserExist(data));
+    });
 });
 
 server.listen(process.env.PORT || 3000, () =>

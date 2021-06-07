@@ -21,6 +21,10 @@ class User {
         this.users.splice(userIndex, 1);
         return user;
     }
+    checkUserExist(username) {
+        const user = this.users.filter((user) => user.name === username);
+        return user.length > 0;
+    }
 }
 
 module.exports = User;
